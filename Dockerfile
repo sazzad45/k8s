@@ -7,7 +7,7 @@ FROM python:3.7-slim AS builder
 WORKDIR /app
 
 # Copy only requirements first (better cache)
-COPY requirements.txt .
+#COPY requirements.txt .
 
 # Install dependencies in a dedicated folder
 RUN pip install --user --no-cache-dir -r requirements.txt
