@@ -1,31 +1,31 @@
 # -------------------------
-# Stage 1: Build / Install Dependencies
+# Stage 1: Builder
 # -------------------------
 FROM python:3.7-slim AS builder
 
-# Set working directory
 WORKDIR /app
 
-# Copy only requirements first (better cache)
+# Copy requirements first (Docker cache optimization)
 COPY requirements.txt .
 
-# Install dependencies in a dedicated folder
-RUN pip install --no-cache-dir -r requirements.txt
+# Install dependencies in a user directory
+RUN python -m pip install --upgrade pip \
+    && pip install --user --no-cache-dir -r requirements.txt
 
-# Copy application source code
+# Copy source code
 COPY . .
 
 # -------------------------
-# Stage 2: Final Runtime Image
+# Stage 2: Final runtime image
 # -------------------------
 FROM python:3.7-slim
 
 WORKDIR /app
 
-# Copy installed dependencies from builder
+# Copy installed packages from builder
 COPY --from=builder /root/.local /root/.local
 
-# Update PATH to include pip installed packages
+# Update PATH so Python can find the installed packages
 ENV PATH=/root/.local/bin:$PATH
 
 # Copy application code
